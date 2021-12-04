@@ -28,7 +28,6 @@ function BugEditor({ auth, showError, showSuccess }) {
     })
       .then((res) => {
         console.log(res.data);
-        setPending(false);
         setBug(res.data.bug);
         setTitle(res.data.bug.title);
         setDescription(res.data.bug.description);
@@ -36,16 +35,19 @@ function BugEditor({ auth, showError, showSuccess }) {
         setClosed(res.data.bug.closed);
         setClassification(res.data.bug.classification);
         setAssignedToUserId(res.data.bug.assignedToUserId);
+        setPending(false);
       })
       .catch((err) => {
         console.error(err);
-        setPending(false);
+        
         setError(err.message);
         showError(err.message);
+        setPending(false);
       });
   }, [auth, showError, bugId]);
 
   useEffect(() => {
+    setPending(true);
     axios(`${process.env.REACT_APP_API_URL}/api/user/list`, {
       method: 'get',
       params: { pageSize: 1000 },
@@ -54,11 +56,11 @@ function BugEditor({ auth, showError, showSuccess }) {
       },
     })
       .then((res) => {
-        setUsers(res.data);
+        setUsers(res.data);setPending(false)
       })
       .catch((err) => {
         console.error(err);
-        showError(err.message);
+        showError(err.message);setPending(false)
       });
   }, [auth, showError]);
 
@@ -67,55 +69,9 @@ function BugEditor({ auth, showError, showSuccess }) {
     setValue(newValue);
   }
 
-  function bugEditorSubmit(evt) {
+  function bugAssignSubmit(evt) {
     evt.preventDefault();
-    // axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}`, {
-    //   method: 'put',
-    //   data: { title, description, stepsToReproduce },
-    //   headers: {
-    //     authorization: `Bearer ${auth?.token}`,
-    //   },
-    // })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     showSuccess(res.data.message);
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //     showError(err.message);
-    //   });
-
-    // axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/classify`, {
-    //   method: 'put',
-    //   data: { classification },
-    //   headers: {
-    //     authorization: `Bearer ${auth?.token}`,
-    //   },
-    // })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     showSuccess(res.data.message);
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //     showError(err.message);
-    //   });
-
-    // axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/close`, {
-    //   method: 'put',
-    //   data: { closed },
-    //   headers: {
-    //     authorization: `Bearer ${auth?.token}`,
-    //   },
-    // })
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     showSuccess(res.data.message);
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //     showError(err.message);
-    //   });
+    setPending(true);
 
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/assign`, {
       method: 'put',
@@ -126,17 +82,81 @@ function BugEditor({ auth, showError, showSuccess }) {
     })
       .then((res) => {
         console.log(res.data);
-        showSuccess(res.data.message);
+        showSuccess(res.data.message);setPending(false)
       })
       .catch((err) => {
         console.error(err);
-        showError(err.message);
+        showError(err.message);setPending(false)
       });
   }
 
+  function bugUpdateSubmit(evt) {
+    evt.preventDefault();
+    setPending(true);
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}`, {
+      method: 'put',
+      data: { title, description, stepsToReproduce },
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+        showSuccess(res.data.message);setPending(false)
+      })
+      .catch((err) => {
+        console.error(err);
+        showError(err.message);setPending(false)
+      });
+  }
+
+  function bugClassifySubmit(evt) {
+    evt.preventDefault();
+    setPending(true);
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/classify`, {
+      method: 'put',
+      data: { classification },
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+        showSuccess(res.data.message);setPending(false)
+      })
+      .catch((err) => {
+        console.error(err);
+        showError(err.message);setPending(false)
+      });
+  }
+
+  function bugCloseSubmit(evt) {
+    evt.preventDefault();
+    setPending(true);
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/close`, {
+      method: 'put',
+      data: { closed },
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+        showSuccess(res.data.message);setPending(false)
+      })
+      .catch((err) => {
+    
+        console.error(err);
+        showError(err.message);
+        setPending(false)
+      });
+  }
+
+
+
   return (
     <div>
-      <h1>Bug Editor</h1>
+      <h1>Bug Editor </h1> <span className="lead">{title}</span>
       <div>{bugId}</div>
       {pending && (
         <div className="spinner-border text-primary" role="status">
@@ -145,7 +165,8 @@ function BugEditor({ auth, showError, showSuccess }) {
       )}
 
       {!pending && bug && (
-        <form>
+        <form className="form-control text-center">
+          <p className = "display-6">Update Bug</p>
           <InputField
             label="Title"
             id="bugEditor-title"
@@ -167,8 +188,14 @@ function BugEditor({ auth, showError, showSuccess }) {
             value={stepsToReproduce}
             onChange={(evt) => onInputChange(evt, setStepsToReproduce)}
           />
+          
+<button className="btn btn-primary mt-2 mb-5" type="submit" onClick={(evt) => bugUpdateSubmit(evt)}>
+            Submit
+          </button>
+
 
           <div>
+          <p className = "display-6">Classify Bug</p>
             <label htmlFor="bugEditor-classification" className="mb-2">
               Classification
             </label>
@@ -182,9 +209,14 @@ function BugEditor({ auth, showError, showSuccess }) {
               <option value="unclassified">Unclassified</option>
               <option value="duplicate">Duplicate</option>
             </select>
+            <button className="btn btn-primary mt-2 mb-5" type="submit" onClick={(evt) => bugClassifySubmit(evt)}>
+            Submit
+          </button>
           </div>
 
           <div>
+          <p className = "display-6">Assign Bug</p>
+
             <label htmlFor="bugEditor-AssignTo" className="mb-2">
               Assign To
             </label>
@@ -200,10 +232,15 @@ function BugEditor({ auth, showError, showSuccess }) {
               {_.map(users, (user) => (
                 <option key={user._id} value={user._id}>{user.fullName} ({user.email})</option>
               ))}
+              
             </select>
+            <button className="btn btn-primary mt-2 mb-5" type="submit" onClick={(evt) => bugAssignSubmit(evt)}>
+            Submit
+          </button>
           </div>
 
           <div>
+          <p className = "display-6">Close Bug</p>
             <label htmlFor="bugEditor-closed" className="mb-2">
               Closed?
             </label>
@@ -211,11 +248,10 @@ function BugEditor({ auth, showError, showSuccess }) {
               <option value={false}>Opened</option>
               <option value={true}>Closed</option>
             </select>
-          </div>
-
-          <button className="btn btn-primary mt-5" type="submit" onClick={(evt) => bugEditorSubmit(evt)}>
+            <button className="btn btn-primary mt-2 mb-5" type="submit" onClick={(evt) => bugCloseSubmit(evt)}>
             Submit
           </button>
+          </div>
         </form>
       )}
     </div>

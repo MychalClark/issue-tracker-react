@@ -42,8 +42,8 @@ function BugListItem({ item,fullName }) {
           </div>
         </div>
         <div className="card-footer">
-          <div>Created By: {fullName}</div>
-          <div>Created On: {moment(item.createdOn).format()} </div>
+          <div>Created By: {item.authorName}</div>
+          <div>Created On: {moment(item.dateCreated).format()} </div>
         </div>
       </div>
     </div>
