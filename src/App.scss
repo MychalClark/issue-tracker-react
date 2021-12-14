@@ -1,0 +1,54 @@
+$palette1: #4af514;
+$palette2: #d4af37;
+$palette3: #eb6a49;
+$palette4: #a537d4;
+$palette5: #409cf7;
+
+$primary: $palette2;
+$secondary: $palette5;
+
+$font-family-base: 'Readex Pro', sans-serif;
+// $font-family-base: 'Open Sans', sans-serif;
+
+@font-face {
+  font-family: 'Readex Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/Readex_Pro/ReadexPro-VariableFont_wght.ttf');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf');
+}
+
+@import '~bootswatch/dist/quartz/variables';
+@import '~bootstrap/scss/bootstrap';
+@import '~bootswatch/dist/quartz/bootswatch';
+
+.open-nav {
+  background-image: linear-gradient(135deg, $palette5, $palette1);
+}
+
+.nav-header{
+
+  font-size: 3rem
+
+}
+
+.nav-link {
+  color: white;
+  font-size: 1.5rem;
+  text-decoration: underline;
+}
+
+.filter-color {
+  color: black;
+}
+
+
+.bugEditor-bugInfo{background-color: rgba(140, 0, 255, 0.2);}
+

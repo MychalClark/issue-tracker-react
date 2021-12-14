@@ -17,6 +17,7 @@ function UserEditor({ auth, showError, showSuccess }) {
   const [role, setRole] = useState();
   const [user, setUser]= useState();
   const [password, setPassword] = useState();
+  const [dateCreated, setCreationDate] = useState();
 
   useEffect(() => {
     setPending(true);
@@ -33,6 +34,7 @@ function UserEditor({ auth, showError, showSuccess }) {
        setGivenName(res.data.givenName)
        setFamilyName(res.data.familyName)
        setUser(res.data)
+       setCreationDate(res.data.dateCreated)
         setPending(false);
       })
       .catch((err) => {
@@ -98,13 +100,33 @@ function UserEditor({ auth, showError, showSuccess }) {
 
   return (
     <div>
-      <h1>User Editor </h1> <span className="lead">{email}</span>
-      <div>{userId}</div>
+      <h1>User </h1>
+      
+
+
+
+
+
+
       {pending && (
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
+
+
+<div className="bugEditor-bugInfo border border-5 p-3 my-3 shadow text-center ">
+        <h1 className="text-center">{fullName}</h1>
+        <span className="lead">{email}</span>
+        <p className="text-muted text-center" style={{ overflowWrap: 'break-word' }}>
+          {userId}
+        </p>
+        <p className="text-muted text-center" style={{ overflowWrap: 'break-word' }}>
+          Creation Date: {dateCreated}
+        </p>
+        <hr></hr>
+        </div>
+
 
       {!pending && user && (
         <form className="form-control text-center">

@@ -6,6 +6,8 @@ import _ from 'lodash';
 import { Link } from 'react-router-dom';
 import InputField from './InputField';
 
+import { MdMail, RiLockPasswordFill  } from 'react-icons/fa';
+
 function LoginForm({ onLogin, showError }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,10 +40,11 @@ function LoginForm({ onLogin, showError }) {
       .then((res) => {
         setPending(false);
         console.log(res);
+        console.log('full', res.data)
         setSuccess(res.data.message);
         const authPayload = jwt.decode(res.data.authToken);
         
-        const auth = { email, userId: res.data.user, token: res.data.authToken, payload: authPayload };
+        const auth = { email, userId: res.data.user, token: res.data.authToken, fullName: res.data.fullName, payload: authPayload };
 
         console.log(auth);
         onLogin(auth);
@@ -85,7 +88,7 @@ function LoginForm({ onLogin, showError }) {
   <div>
       <form className="mx-4">
         <InputField
-          label="Email"
+          label="Email" 
           id="LoginForm-email"
           type="email"
           autoComplete="email"

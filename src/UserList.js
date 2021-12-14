@@ -11,8 +11,7 @@ function UserList({ auth, showError }) {
   const [keywords, setKeywords] = useState('');
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
-  const [closed, setClosed] = useState('');
-  const [classification, setClassification] = useState();
+  const [role, setRole] = useState('');
   const [filter, setFilter] = useState(false);
 
   function onInputChange(evt, setValue) {
@@ -23,7 +22,7 @@ function UserList({ auth, showError }) {
   useEffect(() => {
     setPending(true);
     setError('');
-    setFilter(false)
+    setFilter(false);
 
     axios(`${process.env.REACT_APP_API_URL}/api/user/list`, {
       method: 'get',
@@ -54,7 +53,7 @@ function UserList({ auth, showError }) {
     evt.preventDefault();
     setPending(true);
     setError('');
-    setFilter(false)
+    setFilter(false);
     const auth = localStorage.getItem('authToken');
     const paramAdd = {};
 
@@ -64,13 +63,10 @@ function UserList({ auth, showError }) {
     if (parseInt(maxAge)) {
       paramAdd.maxAge = parseInt(maxAge);
     }
-    if (classification) {
-      paramAdd.classification = classification;
+    if (role) {
+      paramAdd.role = role;
     }
 
-    if (closed) {
-      paramAdd.closed = closed;
-    }
 
     console.log(paramAdd);
     axios(`${process.env.REACT_APP_API_URL}/api/user/list`, {
@@ -123,7 +119,7 @@ function UserList({ auth, showError }) {
             value={keywords}
             onChange={(evt) => onInputChange(evt, setKeywords)}
           ></input>
-          <button type="submit" className="btn btn-outline-primary" onClick={(evt) => searchUsers(evt)}>
+          <button type="submit" className="btn btn-primary" onClick={(evt) => searchUsers(evt)}>
             Search
           </button>
         </div>
@@ -136,145 +132,117 @@ function UserList({ auth, showError }) {
             value={sortBy}
             onChange={(evt) => onInputChange(evt, setSortBy)}
           >
+            <option value="givenName">Sort by Given Name</option>
+            <option value="familyName">Sort by family Name</option>
+            <option value="role">Sort by Role</option>
             <option value="newest">Sort by Newest</option>
             <option value="oldest">Sort by Oldest</option>
-            <option value="title">Sort by Title</option>
-            <option value="classification">Sort by Classification</option>
-            <option value="assignedTo">Sort by Assignee</option>
-            <option value="createdBy">Sort by Author</option>
           </select>
 
-          <button type="submit" className="btn btn-outline-primary" onClick={(evt) => filterToggle(evt)}>
+          <button type="submit" className="btn btn-primary" onClick={(evt) => filterToggle(evt)}>
             Filters
           </button>
         </div>
 
-        <div
-          className={filter ? 'shadow border border-2 bg-white p- d-flex align-items-center dropdown-menu' : 'd-none'}
-        >
+        <div className={filter ? 'filter-color shadow border border-4 d-block dropdown-menu p-3' : 'd-none'}>
           <div className=" row align-items-start">
             <p className="display-6 text-center">Filters</p>
             <div className="col border">
               <p className="lead">Role</p>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="bugStatusRadio"
-                  id="bugStatusAny"
-                  value=""
-                  onChange={(evt) => onInputChange(evt, setClosed)}
-                ></input>
-                <label className="form-check-label" htmlFor="bugStatusAny">
-                  Any
-                </label>
-              </div>
 
               <div className="form-check">
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="bugStatusRadio"
-                  id="bugStatusOpen"
-                  value={false}
-                  onChange={(evt) => onInputChange(evt, setClosed)}
+                  name="UserRoleRadio"
+                  id="RadioAny"
+                  value={''}
+                  checked={role === ''}
+                  onChange={(evt) => onInputChange(evt, setRole)}
                 ></input>
-                <label className="form-check-label" htmlFor="bugStatusOpen">
-                  Open
+                <label className="form-check-label" htmlFor="RadioAny">
+                  Any
                 </label>
               </div>
               <div className="form-check">
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="bugStatusRadio"
-                  id="bugStatusClosed"
-                  value={true}
-                  onChange={(evt) => onInputChange(evt, setClosed)}
+                  name="UserRoleRadio"
+                  id="RadioQualityAnalyst"
+                  value={'Quality Analyst'}
+                  checked={role === 'Quality Analyst'}
+                  onChange={(evt) => onInputChange(evt, setRole)}
                 ></input>
-                <label className="form-check-label" htmlFor="bugStatusClosed">
-                  Closed
+                <label className="form-check-label" htmlFor="RadioQualityAnalyst">
+                  Quality Analyst
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="UserRoleRadio"
+                  id="RadioDeveloper"
+                  value={'Developer'}
+                  checked={role === 'Developer'}
+                  onChange={(evt) => onInputChange(evt, setRole)}
+                ></input>
+                <label className="form-check-label" htmlFor="RadioDeveloper">
+                  Developer
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="UserRoleRadio"
+                  id="RadioTechnicalManager"
+                  value={'Technical Manager'}
+                  checked={role === 'Technical Manager'}
+                  onChange={(evt) => onInputChange(evt, setRole)}
+                ></input>
+                <label className="form-check-label" htmlFor="RadioTechnicalManager">
+                  Technical Manager
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="UserRoleRadio"
+                  id="RadioBusinessAnalyst"
+                  value={'Business Analyst'}
+                  checked={role === 'Business Analyst'}
+                  onChange={(evt) => onInputChange(evt, setRole)}
+                ></input>
+                <label className="form-check-label" htmlFor="RadioBusinessAnalyst">
+                Business Analyst
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="UserRoleRadio"
+                  id="RadioProductManager"
+                  value={'Product Manager'}
+                  checked={role === 'Product Manager'}
+                  onChange={(evt) => onInputChange(evt, setRole)}
+                ></input>
+                <label className="form-check-label" htmlFor="RadioProductManager">
+                Product Manager
                 </label>
               </div>
             </div>
 
             <div className="col border">
-              <p className="lead">classification</p>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="classificationRadio"
-                  id="bugClassificationAny"
-                  value=""
-                  onChange={(evt) => onInputChange(evt, setClassification)}
-                ></input>
-                <label className="form-check-label" htmlFor="bugClassificationAny">
-                  Any
-                </label>
-              </div>
-
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="classificationRadio"
-                  id="bugClassificationApproved"
-                  value="approved"
-                  onChange={(evt) => onInputChange(evt, setClassification)}
-                ></input>
-                <label className="form-check-label" htmlFor="bugClassificationApproved">
-                  Approved
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="classificationRadio"
-                  id="flexRadioDefault2"
-                  value="bugClassificationUnapproved"
-                  onChange={(evt) => onInputChange(evt, setClassification)}
-                ></input>
-                <label className="form-check-label" htmlFor="bugClassificationUnapproved">
-                  Unapproved
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="classificationRadio"
-                  id="bugClassificationDuplicate"
-                  value="duplicate"
-                  onChange={(evt) => onInputChange(evt, setClassification)}
-                ></input>
-                <label className="form-check-label" htmlFor="bugClassificationDuplicate">
-                  Duplicate
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="classificationRadio"
-                  id="bugClassificationUnclassified"
-                  value="unclassified"
-                  onChange={(evt) => onInputChange(evt, setClassification)}
-                ></input>
-                <label className="form-check-label" htmlFor="bugClassificationUnclassified">
-                  Unclassified
-                </label>
-              </div>
-            </div>
-
-            <div className="col border">
-              <p className="lead">Bug Age(days)</p>
+              <p className="lead">User Age(days)</p>
               <label htmlFor="BugList-minAge">Min Age</label>
               <input
                 type="text"
                 className="form-control"
-                id="BugList-minAge"
+                id="UserList-minAge"
                 name="minAge"
                 aria-label="min Age"
                 value={minAge}
@@ -285,7 +253,7 @@ function UserList({ auth, showError }) {
               <input
                 type="text"
                 className="form-control"
-                id="BugList-maxAge"
+                id="UserList-maxAge"
                 name="maxAge"
                 aria-label="max age"
                 value={maxAge}
@@ -305,8 +273,9 @@ function UserList({ auth, showError }) {
               <span className="visually-hidden">Loading...</span>
             </div>
           )}
+          {!auth && <div className="text-danger mb-2">You need to be logged in to Access Bug List.</div>}
           {error && <div className="text-danger mb-2">{error}</div>}
-          {!pending && !error && _.isEmpty(items) && <div className="mb-2">No Users found.</div>}
+          {!pending && !error && auth && _.isEmpty(items) && <div className="mb-2">No Users found.</div>}
           {_.map(items, (item) => (
             <UserListItem key={item._id} item={item} />
           ))}

@@ -1,10 +1,13 @@
-import { useState, userEffect, useEffect } from 'react';
+import './App.scss';
+
+import { useState, useEffect } from 'react';
 import LoginForm from './LoginForm';
 import Navbar from './Navbar';
 import BugList from './BugList';
 import RegisterForm from './RegisterForm';
 import UserList from './UserList';
 import BugEditor from './BugEditor';
+import ReportBug from './ReportBug';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -52,7 +55,7 @@ function App() {
   function onLogout() {
     setAuth(null);
     navigate('/login');
-    showSuccess('Logged out!');
+  
     if (localStorage) {
       localStorage.removeItem('authToken');
     }
@@ -78,8 +81,8 @@ function App() {
             path="/user/:userId"
             element={<UserEditor auth={auth} showError={showError} showSuccess={showSuccess} />}
           />
-          {/* <Route path="/user/:userId" element={<UserEditor />} /> */}
-          {/* <Route path="*" element={<NotFound />} /> */}
+          <Route path="/bug/report" element={<ReportBug auth={auth} showError={showError} showSuccess={showSuccess} />} />
+          
         </Routes>
       </main>
 
