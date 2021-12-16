@@ -54,6 +54,18 @@ function Navbar({ auth, onLogout }) {
                <FaRegListAlt className="me-1"/> User List
               </NavLink>
             </li>
+
+            <li className="nav-item" >
+              <NavLink
+                className="nav-link"
+                to="/user/me"
+                onClick={(evt) => {
+                  onNavToggle(evt);
+                }}
+              >
+               <FaUser className="me-1"/> My Profile
+              </NavLink>
+            </li>
           </ul>
         </div>
 

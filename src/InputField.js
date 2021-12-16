@@ -4,13 +4,13 @@ function InputField({ label, id, error, className, type, ...rest }) {
   return (
 
     <div>
-      {console.log(type)}
+      
   {type !== "textarea" && ( 
     <div className="mb-3">
       <label className="form-label" htmlFor={id}>
         {label}
       </label>
-      <input className={inputClasses} id={id} {...rest} />
+      <input className={inputClasses} id={id} type={type} {...rest} />
       {error && <div className="text-danger mt-2">{error}</div>}
     </div>)}
 

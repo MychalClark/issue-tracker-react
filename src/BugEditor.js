@@ -25,7 +25,16 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [authorName, setAuthorName] = useState('');
   const [assignedUserName, setAssignedToUserName] = useState('');
   const [bugDate, setBugDate] = useState(null);
-  const [createComment, setCreateComment] = useState('');
+  const [text, setCreateComment] = useState('');
+  const [editBug, setEditBug] = useState(false);
+
+
+
+  const canEditBugs = auth?.payload?.permissions?.canEditBugs;
+  const canClassifyBugs = auth?.payload?.permissions?.canClassifyBugs;
+  const canCloseBugs = auth?.payload?.permissions?.canCloseBugs;
+  const canAssignBugs = auth?.payload?.permissions?.canAssignBugs;
+  
 
   useEffect(() => {
     setPending(true);
@@ -170,6 +179,11 @@ function BugEditor({ auth, showError, showSuccess }) {
       });
   }
 
+  function toggleEdit(evt) {
+    evt.preventDefault();
+    setEditBug(!editBug);
+  }
+
   function bugCloseSubmit(evt) {
     evt.preventDefault();
     setPending(true);
@@ -192,6 +206,30 @@ function BugEditor({ auth, showError, showSuccess }) {
       });
   }
 
+  function postComment(evt){
+    evt.preventDefault();
+    axios(`${process.env.REACT_APP_API_URL}/api/comment/${bugId}/new`, {
+      method: 'put',
+      data: { text },
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+      .then((res) => {
+        console.log(res.data);
+        showSuccess(res.data.message);
+        window.location.reload(false);
+        setPending(false);
+
+      })
+      .catch((err) => {
+        console.error(err);
+        showError(err.message);
+        setPending(false);
+      });
+
+  }
+
   return (
     <div>
       {pending && (
@@ -200,6 +238,7 @@ function BugEditor({ auth, showError, showSuccess }) {
         </div>
       )}
 
+{!pending && auth && (<div>
       <div className="bugEditor-bugInfo border border-5 p-3 my-3 shadow ">
         <h1 className="text-center">{title}</h1>
         <p className="text-muted text-center" style={{ overflowWrap: 'break-word' }}>
@@ -211,6 +250,13 @@ function BugEditor({ auth, showError, showSuccess }) {
         <p className="text-muted text-center" style={{ overflowWrap: 'break-word' }}>
           Creation Date: {bugDate}
         </p>
+        { (canEditBugs|| canAssignBugs|| canCloseBugs|| canClassifyBugs) && (
+              <div className="d-grid gap-2 col-6 mx-auto">
+                <button className="btn btn-secondary btn-lg mt-2" type="submit" onClick={(evt) => toggleEdit(evt)}>
+                  Edit
+                </button>
+              </div>
+            )}
         <hr></hr>
 
         <div className="display-6">
@@ -245,54 +291,20 @@ function BugEditor({ auth, showError, showSuccess }) {
             </div>
             <div>{closed ? 'Closed' : 'Open'}</div>
           </div>
-          <div className="col">
-            <div>
-              <FaComments className="mb-1" /> Comments:
-            </div>
-            <div>{assignedUserName}</div>
-          </div>
         </div>
+       
       </div>
+      
 
 
       
-      {/* comments */}
-      <div className="pt-5">
-        <div className="display-6">Comments </div>
+      
+   
 
-       <form className="form-control">
-       <label className="form-label" htmlFor="bugEditor-addComment">
-        Add Comment
-      </label>
-          <div class="input-group">
-  <span class="input-group-text"><button class="btn btn-primary" type="button">Post</button></span>
-
-  <InputField
-            id="bugEditor-addComment"
-            type="textarea"
-            value={createComment}
-            onChange={(evt) => onInputChange(evt, setCreateComment)}
-          />
-
-</div>
-</form>
-
-        <hr></hr>
-        {_.map(comments, (comment) => (
-          <div className="card m-3">
-            <div className="card-body">
-              <div className="card-title">{comment.userId}</div>
-              <div className="text-muted">{comment.timeCreated}</div>
-              <hr></hr>
-              <p className="card-text">{comment.userComment}</p>
-            </div>
-          </div>
-        ))}
-        <hr></hr>
-      </div>
-
-      {!pending && bug && (
+      {!pending && bug && editBug &&  (canEditBugs|| canAssignBugs|| canCloseBugs|| canClassifyBugs) && (
         <form className="form-control text-center">
+
+         {canEditBugs && (<div>
           <p className="display-6">Update Bug</p>
           <InputField
             label="Title"
@@ -304,14 +316,14 @@ function BugEditor({ auth, showError, showSuccess }) {
           <InputField
             label="Description"
             id="bugEditor-description"
-            type="text"
+            type="textarea"
             value={description}
             onChange={(evt) => onInputChange(evt, setDescription)}
           />
           <InputField
             label="Steps To Reproduce"
             id="bugEditor-stepsToReproduce"
-            type="text"
+            type="textarea"
             value={stepsToReproduce}
             onChange={(evt) => onInputChange(evt, setStepsToReproduce)}
           />
@@ -319,8 +331,9 @@ function BugEditor({ auth, showError, showSuccess }) {
           <button className="btn btn-primary mt-2 mb-5" type="submit" onClick={(evt) => bugUpdateSubmit(evt)}>
             Submit
           </button>
+          </div>)} 
 
-          <div>
+         {canClassifyBugs && ( <div>
             <p className="display-6">Classify Bug</p>
             <label htmlFor="bugEditor-classification" className="mb-2">
               Classification
@@ -339,8 +352,9 @@ function BugEditor({ auth, showError, showSuccess }) {
               Submit
             </button>
           </div>
+)}
 
-          <div>
+          {canAssignBugs && (<div>
             <p className="display-6">Assign Bug</p>
 
             <label htmlFor="bugEditor-AssignTo" className="mb-2">
@@ -363,8 +377,9 @@ function BugEditor({ auth, showError, showSuccess }) {
               Submit
             </button>
           </div>
-
-          <div>
+          )}
+          
+          {canCloseBugs && (<div>
             <p className="display-6">Close Bug</p>
             <label htmlFor="bugEditor-closed" className="mb-2">
               Closed?
@@ -376,9 +391,44 @@ function BugEditor({ auth, showError, showSuccess }) {
             <button className="btn btn-primary mt-2 mb-5" type="submit" onClick={(evt) => bugCloseSubmit(evt)}>
               Submit
             </button>
-          </div>
+          </div>)}
         </form>
       )}
+   <div className="pt-5">
+        <div className="display-6">Comments </div>
+
+       <form className="form-control">
+       <label className="form-label" htmlFor="bugEditor-addComment">
+        Add Comment
+      </label>
+          <div class="input-group">
+  <span class="input-group-text"><button class="btn btn-primary" type="button"  onClick={(evt) => postComment(evt)}>Post</button></span>
+
+  <InputField
+            id="bugEditor-addComment"
+            type="textarea"
+            value={text}
+            onChange={(evt) => onInputChange(evt, setCreateComment)}
+          />
+
+</div>
+</form>
+
+        <hr></hr>
+        {_.map(comments, (comment) => (
+          <div className="card m-3">
+            <div className="card-body">
+              <div className="card-title">{comment.userId}</div>
+              <div className="text-muted">{comment.timeCreated}</div>
+              <hr></hr>
+              <p className="card-text">{comment.text}</p>
+            </div>
+          </div>
+        ))}
+        <hr></hr>
+      </div>
+      </div>)}
+      { !pending && !auth && (<div><h1>Bug</h1><div className="text-danger">You need to be logged in to access bugs.</div></div>)}
     </div>
   );
 }

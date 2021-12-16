@@ -68,7 +68,7 @@ function App() {
 
       <main className="container">
         <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/me" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginForm onLogin={onLogin} showError={showError} />} />
           <Route path="/register" element={<RegisterForm onLogin={onLogin} showError={showError} />} />
           <Route path="/bug/list" element={<BugList showError={showError} auth={auth} />} />
@@ -77,18 +77,25 @@ function App() {
             element={<BugEditor auth={auth} showError={showError} showSuccess={showSuccess} />}
           />
           <Route path="/user/list" element={<UserList showError={showError} auth={auth}/>} />
+
+          <Route
+            path="/user/me"
+            element={<UserEditor auth={auth} showError={showError} showSuccess={showSuccess} me="me" />}
+          />
+
           <Route
             path="/user/:userId"
             element={<UserEditor auth={auth} showError={showError} showSuccess={showSuccess} />}
           />
           <Route path="/bug/report" element={<ReportBug auth={auth} showError={showError} showSuccess={showSuccess} />} />
           
+          
         </Routes>
       </main>
 
       <footer class="footer mt-auto py-1 bg-dark fixed-bottom">
         <div class="container">
-          <div class="text-muted text-center">Mychal Clark</div>
+          <div class="text-muted text-center">	&copy;2021 Mychal Clark</div>
         </div>
       </footer>
     </div>
