@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "id": "issue-tracker",
+  "short_name": "Issue Tracker",
+  "name": "Issue Tracker React",
   "icons": [
     {
       "src": "favicon.ico",
@@ -21,5 +22,7 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "description":"Mychal's Issue Tracker in the making.",
+  "orientation": "portrait-primary"
 }
